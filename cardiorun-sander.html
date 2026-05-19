@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CardioRun™ — Relatório de Performance · Sander</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F7F4;--bg2:#F1F4F2;--card:#FFFFFF;
+  --ink:#20242A;--ink2:#303741;--muted:#697280;--soft:#98A2B3;
+  --line:#E6E4DF;--line2:#EEF0EA;
+  --teal:#007C78;--teal2:#0A8F86;--tealDark:#075E56;--tealSoft:#E5F5F2;
+  --mag:#C0265C;--mag2:#D44472;--magSoft:#FBE8F0;
+  --green:#11845B;--greenSoft:#EAF8F0;
+  --amber:#B7791F;--amberSoft:#FFF5DA;
+  --red:#C2413A;--redSoft:#FDECEC;
+  --shadow:0 20px 60px rgba(16,24,40,.08);
+  --r:20px;--r2:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  font-family:"Manrope",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 5% 10%,rgba(0,124,120,.09),transparent 28%),
+    radial-gradient(circle at 92% 5%,rgba(192,38,92,.08),transparent 26%),
+    linear-gradient(135deg,#fff 0%,var(--bg) 52%,#F4F9F7 100%);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.bg-mark{position:fixed;inset:0;pointer-events:none;opacity:.55;overflow:hidden;z-index:-1}
+.bg-mark:before{content:"";position:absolute;top:40px;left:-80px;width:240px;height:240px;border:1px solid rgba(0,124,120,.22);border-radius:50%}
+.bg-mark:after{content:"";position:absolute;right:-140px;bottom:-100px;width:340px;height:340px;border:1px solid rgba(192,38,92,.16);border-radius:50%}
+.page{max-width:960px;margin:0 auto;padding:28px 22px 56px}
+
+.header{text-align:center;margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.brand-title{font-size:26px;font-weight:800;letter-spacing:6px;color:var(--tealDark);text-transform:uppercase}
+.brand-sub{font-size:11px;font-weight:800;letter-spacing:5px;color:var(--mag);text-transform:uppercase;margin-top:4px}
+.athlete-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
+.athlete-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0}
+.athlete-info{text-align:left}
+.athlete-info h1{font-size:20px;font-weight:800;letter-spacing:-.4px;color:var(--ink)}
+.athlete-info p{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.header-date{font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--soft);text-transform:uppercase;margin-top:12px}
+
+.sticky-nav{position:sticky;top:0;z-index:20;display:flex;justify-content:center;gap:4px;padding:7px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(16,24,40,.05);margin-bottom:28px;overflow-x:auto}
+.tab{border:0;background:transparent;padding:10px 18px;border-radius:999px;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer;transition:.18s;white-space:nowrap;font-family:"Manrope",sans-serif}
+.tab:hover{color:var(--ink)}
+.tab.active{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 8px 22px rgba(0,124,120,.2)}
+
+.section{display:none}.section.active{display:block}
+
+.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:0 6px 20px rgba(16,24,40,.04);margin-bottom:16px}
+.card-label{color:var(--soft);font-size:10px;letter-spacing:1.6px;font-weight:800;text-transform:uppercase;margin-bottom:14px}
+.card h2{font-size:20px;font-weight:800;letter-spacing:-.4px;color:var(--ink);margin-bottom:10px}
+.card p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px}
+.card p strong{color:var(--ink)}
+.card p:last-child{margin-bottom:0}
+
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.metric{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--r2);padding:18px 14px;text-align:center;box-shadow:0 4px 12px rgba(16,24,40,.04)}
+.metric-val{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--teal)}
+.metric-val.mag{color:var(--mag)}.metric-val.green{color:var(--green)}.metric-val.amber{color:var(--amber)}.metric-val.red{color:var(--red)}
+.metric-unit{font-size:11px;color:var(--soft);font-weight:700;margin-top:2px}
+.metric-label{font-size:11px;color:var(--muted);font-weight:700;margin-top:6px}
+
+.semaforo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.sem{background:#fff;border:1px solid var(--line);border-radius:var(--r2);padding:14px;display:flex;align-items:center;gap:10px}
+.sem-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-teal{background:var(--teal);box-shadow:0 0 6px rgba(0,124,120,.4)}
+.dot-green{background:var(--green);box-shadow:0 0 6px rgba(17,132,91,.4)}
+.dot-amber{background:var(--amber);box-shadow:0 0 6px rgba(183,121,31,.4)}
+.dot-red{background:var(--red);box-shadow:0 0 6px rgba(194,65,58,.4)}
+.sem-label{font-size:11px;color:var(--muted);font-weight:600}
+.sem-val{font-size:12px;font-weight:800}
+.sv-teal{color:var(--tealDark)}.sv-green{color:var(--green)}.sv-amber{color:var(--amber)}.sv-red{color:var(--red)}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.tbl th{text-align:left;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--soft);padding:0 0 12px}
+.tbl td{padding:11px 0;border-bottom:1px solid var(--line2);color:var(--muted);font-size:13px;font-weight:600}
+.tbl td:first-child{color:var(--ink);font-weight:700}
+.tbl td:last-child{text-align:right;font-weight:800;color:var(--ink)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.hl td{background:var(--tealSoft);padding-left:10px;padding-right:10px}
+.tbl tr.hl td:first-child{color:var(--tealDark)}
+.tbl tr.hl td:last-child{color:var(--teal)}
+.tbl tr.warn td:last-child{color:var(--amber)}
+
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:800}
+.badge.teal{background:var(--tealSoft);color:var(--tealDark);border:1px solid rgba(0,124,120,.14)}
+.badge.green{background:var(--greenSoft);color:var(--green);border:1px solid rgba(17,132,91,.13)}
+.badge.amber{background:var(--amberSoft);color:var(--amber);border:1px solid rgba(183,121,31,.14)}
+.badge.red{background:var(--redSoft);color:var(--red);border:1px solid rgba(194,65,58,.14)}
+
+.box{margin-top:12px;padding:16px 18px;border-radius:var(--r2);font-size:13px;line-height:1.65}
+.box strong{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
+.box p{font-size:13px;margin:0;color:var(--muted)}
+.box.teal{background:var(--tealSoft);border:1px solid rgba(0,124,120,.18)}.box.teal strong{color:var(--tealDark)}
+.box.amber{background:var(--amberSoft);border:1px solid rgba(183,121,31,.2)}.box.amber strong{color:var(--amber)}
+.box.red{background:var(--redSoft);border:1px solid rgba(194,65,58,.18)}.box.red strong{color:var(--red)}
+.box.green{background:var(--greenSoft);border:1px solid rgba(17,132,91,.18)}.box.green strong{color:var(--green)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+
+.plist{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.pitem{display:flex;align-items:flex-start;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r2);padding:16px}
+.pnum{font-size:24px;font-weight:800;color:var(--teal);line-height:1;flex-shrink:0;width:24px}
+.ptext strong{display:block;font-size:13px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.ptext span{font-size:12px;color:var(--muted);line-height:1.6}
+
+.cklist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.cklist li{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.5}
+.ico{font-weight:800;flex-shrink:0}.ico.green{color:var(--green)}.ico.amber{color:var(--amber)}.ico.teal{color:var(--teal)}
+.cklist li strong{color:var(--ink)}
+
+.footer{margin-top:36px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-left{font-size:13px;font-weight:800;color:var(--tealDark)}
+.footer-left span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+.footer-right{font-size:11px;color:var(--soft);text-align:right;font-weight:600}
+
+@media(max-width:680px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .semaforo{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .sticky-nav{justify-content:flex-start;border-radius:20px}
+  .footer{flex-direction:column;align-items:flex-start}
+  .footer-right{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="bg-mark"></div>
+<main class="page">
+
+<header class="header">
+  <div class="brand-title">CardioRun™</div>
+  <div class="brand-sub">Análise Fisiológica · Performance em Corrida</div>
+  <div class="athlete-row">
+    <div class="athlete-avatar">S</div>
+    <div class="athlete-info">
+      <h1>Sander</h1>
+      <p>Corredor · Teste 2400m + Treino 46 min · 2 sessões analisadas</p>
+    </div>
+  </div>
+  <div class="header-date">Maio 2026 · Ubá, Minas Gerais</div>
+</header>
+
+<nav class="sticky-nav">
+  <button class="tab active" onclick="showTab('resumo',this)">Resumo</button>
+  <button class="tab" onclick="showTab('teste',this)">Teste 2400m</button>
+  <button class="tab" onclick="showTab('treino',this)">Treino</button>
+  <button class="tab" onclick="showTab('zonas',this)">Zonas</button>
+  <button class="tab" onclick="showTab('conduta',this)">Conduta</button>
+</nav>
+
+<!-- RESUMO -->
+<section class="section active" id="resumo">
+  <div class="semaforo">
+    <div class="sem"><div class="sem-dot dot-teal"></div><div><div class="sem-label">Capacidade Aeróbia</div><div class="sem-val sv-teal">Excelente</div></div></div>
+    <div class="sem"><div class="sem-dot dot-green"></div><div><div class="sem-label">VO₂máx estimado</div><div class="sem-val sv-green">57–59 ml/kg/min</div></div></div>
+    <div class="sem"><div class="sem-dot dot-amber"></div><div><div class="sem-label">Carga do Treino</div><div class="sem-val sv-amber">Muito Alta</div></div></div>
+    <div class="sem"><div class="sem-dot dot-red"></div><div><div class="sem-label">FCmáx Estabelecida</div><div class="sem-val sv-red">Pendente</div></div></div>
+    <div class="sem"><div class="sem-dot dot-teal"></div><div><div class="sem-label">Efeito Aeróbico</div><div class="sem-val sv-teal">5.0 / máximo</div></div></div>
+    <div class="sem"><div class="sem-dot dot-amber"></div><div><div class="sem-label">Distribuição de Carga</div><div class="sem-val sv-amber">Ajuste necessário</div></div></div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val">57–59</div><div class="metric-unit">ml/kg/min</div><div class="metric-label">VO₂máx estimado</div></div>
+    <div class="metric"><div class="metric-val green">16,5</div><div class="metric-unit">km/h</div><div class="metric-label">vVO₂ estimada</div></div>
+    <div class="metric"><div class="metric-val amber">189</div><div class="metric-unit">bpm</div><div class="metric-label">FC máx registrada</div></div>
+    <div class="metric"><div class="metric-val mag">3:48</div><div class="metric-unit">/km</div><div class="metric-label">Melhor pace (teste)</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Achado Principal</div>
+    <h2>Capacidade aeróbia excelente — carga do treino acima do controlado</h2>
+    <p>O teste de 2400m em 9:06 com FC média de apenas <strong>153 bpm</strong> indica alta eficiência cardiovascular para o ritmo apresentado. O VO₂máx estimado de <strong>57–59 ml/kg/min</strong> classifica o atleta como <strong>Excelente</strong> pela tabela ACSM.</p>
+    <p>O treino de 46 min registrou FC média de <strong>165 bpm</strong> e FC máxima de <strong>189 bpm</strong>, com efeito aeróbico <strong>5.0</strong> — valor máximo possível no Garmin. A sessão foi conduzida predominantemente acima do limiar anaeróbico, sem controle de zona.</p>
+    <div class="box amber">
+      <strong>→ FCmáx real não estabelecida</strong>
+      <p>Os 161 bpm do teste são submáximos. Os 189 bpm do treino são a referência funcional atual — o teto real pode ser igual ou superior. Determinar antes de prescrever zonas definitivas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTE -->
+<section class="section" id="teste">
+  <div class="card">
+    <div class="card-label">Dados Brutos · Teste Progressivo 2400m · 16/05/2026</div>
+    <table class="tbl">
+      <tr><td>Distância</td><td>2,40 km</td></tr>
+      <tr><td>Tempo total</td><td>9:06 min</td></tr>
+      <tr><td>Ritmo médio</td><td>3:48 /km</td></tr>
+      <tr><td>Velocidade média</td><td>15,8 km/h</td></tr>
+      <tr><td>Velocidade máxima</td><td>18,5 km/h</td></tr>
+      <tr><td>FC média</td><td>153 bpm</td></tr>
+      <tr class="warn"><td>FC máxima registrada</td><td>161 bpm ⚠ submáxima</td></tr>
+      <tr><td>Calorias</td><td>105 kcal</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-label">VO₂máx — Estimativa e Classificação</div>
+    <p>Calculado pela equação ACSM com fator de correção para esforço máximo sustentado por 9 min a 15,8 km/h.</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="metric" style="margin:0"><div class="metric-val green">57–59</div><div class="metric-unit">ml/kg/min</div><div class="metric-label">VO₂máx estimado</div></div>
+      <div class="metric" style="margin:0"><div class="metric-val" style="font-size:20px">Excelente</div><div class="metric-unit"></div><div class="metric-label">Classificação ACSM</div></div>
+    </div>
+    <table class="tbl" style="margin-top:16px">
+      <thead><tr><th>Classificação</th><th style="text-align:left">VO₂máx</th><th></th></tr></thead>
+      <tr><td>Fraco</td><td style="text-align:left;font-weight:600;color:var(--muted)">&lt; 38</td><td></td></tr>
+      <tr><td>Regular</td><td style="text-align:left;font-weight:600;color:var(--muted)">38–44</td><td></td></tr>
+      <tr><td>Bom</td><td style="text-align:left;font-weight:600;color:var(--muted)">45–51</td><td></td></tr>
+      <tr><td>Muito Bom</td><td style="text-align:left;font-weight:600;color:var(--muted)">52–56</td><td></td></tr>
+      <tr class="hl"><td>Excelente</td><td style="text-align:left;font-weight:700;color:var(--teal)">57–62</td><td><span class="badge teal">✓ Sander</span></td></tr>
+      <tr><td>Superior</td><td style="text-align:left;font-weight:600;color:var(--muted)">&gt; 62</td><td></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-label">vVO₂ — Velocidade no VO₂máx</div>
+    <p>Velocidade mínima que elicita o consumo máximo de oxigênio — calculada pela equação inversa ACSM.</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="metric" style="margin:0"><div class="metric-val" style="font-size:20px">16,2–16,8</div><div class="metric-unit">km/h</div><div class="metric-label">vVO₂ estimada</div></div>
+      <div class="metric" style="margin:0"><div class="metric-val" style="font-size:20px">3:34–3:42</div><div class="metric-unit">/km</div><div class="metric-label">Ritmo correspondente</div></div>
+    </div>
+    <div class="box teal">
+      <strong>Referência para HIIT</strong>
+      <p>Estímulos entre 95–105% da vVO₂ (15,4–17,6 km/h) são o intervalo mais eficiente para desenvolvimento do VO₂máx.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">FC no Teste — Análise Crítica</div>
+    <p>FC média de <strong>153 bpm</strong> a 15,8 km/h é relativamente baixa para o ritmo. Possíveis causas:</p>
+    <ul class="cklist">
+      <li><span class="ico teal">→</span><span>Alta eficiência cardiovascular (corredor treinado)</span></li>
+      <li><span class="ico teal">→</span><span>Atraso cronotrópico em teste de curta duração (9 min)</span></li>
+      <li><span class="ico teal">→</span><span>Perfil de terreno influenciando esforço mecânico</span></li>
+    </ul>
+    <div class="box red">
+      <strong>161 bpm não é a FCmáx real</strong>
+      <p>O treino de 46 min registrou 189 bpm — confirmando reserva cardiovascular muito maior do que o teste capturou.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TREINO -->
+<section class="section" id="treino">
+  <div class="card">
+    <div class="card-label">Dados Brutos · Treino Corrida · 46 min</div>
+    <table class="tbl">
+      <tr><td>Tempo total</td><td>46:43 min</td></tr>
+      <tr><td>Ritmo médio</td><td>4:40 /km</td></tr>
+      <tr><td>Melhor ritmo</td><td>3:46 /km</td></tr>
+      <tr><td>Velocidade média</td><td>12,8 km/h</td></tr>
+      <tr><td>Velocidade máxima</td><td>16,0 km/h</td></tr>
+      <tr><td>FC média</td><td>165 bpm</td></tr>
+      <tr class="hl"><td>FC máxima</td><td>189 bpm → referência FCmáx funcional</td></tr>
+      <tr class="warn"><td>Efeito aeróbico</td><td>5.0 / 5.0 — MÁXIMO</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-label">Análise de Carga — Ponto Crítico</div>
+    <h2>Efeito Aeróbico 5.0 = Sobrecarga Máxima</h2>
+    <p>O Garmin classifica efeito aeróbico <strong>5.0 como "Overreaching"</strong> — estímulo além do necessário para adaptação, com risco de acúmulo de fadiga se repetido sistematicamente.</p>
+    <p>FC média de <strong>165 bpm</strong> durante 46 min equivale a <strong>87% da FCmáx funcional</strong> (189 bpm). O atleta sustentou esforço de limiar anaeróbico alto por quase 47 minutos contínuos.</p>
+    <div class="box red">
+      <strong>Risco real de overreaching</strong>
+      <p>Treinar sistematicamente acima de 85% FCmáx sem periodização leva a overreaching em 3–4 semanas. Sinais: queda de performance, sono prejudicado, FC de repouso elevada.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Relação Teste × Treino</div>
+    <table class="tbl">
+      <thead><tr><th>Indicador</th><th style="text-align:left">Teste 2400m</th><th>Treino 46min</th></tr></thead>
+      <tr><td>Ritmo</td><td style="text-align:left;font-weight:600;color:var(--muted)">3:48 /km</td><td>4:40 /km</td></tr>
+      <tr><td>Velocidade</td><td style="text-align:left;font-weight:600;color:var(--muted)">15,8 km/h</td><td>12,8 km/h</td></tr>
+      <tr><td>FC média</td><td style="text-align:left;font-weight:600;color:var(--muted)">153 bpm</td><td>165 bpm</td></tr>
+      <tr class="hl"><td>FC máxima</td><td style="text-align:left;font-weight:600;color:var(--muted)">161 bpm</td><td>189 bpm ← real</td></tr>
+      <tr><td>Duração</td><td style="text-align:left;font-weight:600;color:var(--muted)">9:06 min</td><td>46:43 min</td></tr>
+    </table>
+    <div class="box teal">
+      <strong>Leitura estratégica</strong>
+      <p>Ritmo mais baixo no treino, FC significativamente mais alta por 5× mais tempo. O atleta não controlou intensidade por zona — correu por sensação acima do limiar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ZONAS -->
+<section class="section" id="zonas">
+  <div class="card">
+    <div class="card-label">Base de Cálculo</div>
+    <p>FCmáx funcional utilizada: <strong>189 bpm</strong> (registrada no treino de 46 min). Referência provisória — confirmar via teste de campo com monitor de tórax.</p>
+  </div>
+  <div class="card">
+    <div class="card-label">Zonas de FC · Corrida</div>
+    <table class="tbl">
+      <thead><tr><th>Zona</th><th style="text-align:left">% FCmáx</th><th style="text-align:left">FC Alvo</th><th>Objetivo</th></tr></thead>
+      <tr><td>Z1 · Recuperação</td><td style="text-align:left;color:var(--muted);font-weight:600">50–60%</td><td style="text-align:left;font-weight:700;color:var(--ink)">95–113 bpm</td><td>Regeneração ativa</td></tr>
+      <tr><td>Z2 · Base Aeróbia</td><td style="text-align:left;color:var(--muted);font-weight:600">60–70%</td><td style="text-align:left;font-weight:700;color:var(--ink)">113–132 bpm</td><td>Construção aeróbia</td></tr>
+      <tr><td>Z3 · Aeróbio Moderado</td><td style="text-align:left;color:var(--muted);font-weight:600">70–80%</td><td style="text-align:left;font-weight:700;color:var(--ink)">132–151 bpm</td><td>Resistência aeróbia</td></tr>
+      <tr class="hl"><td>Z4 · Limiar</td><td style="text-align:left;color:var(--teal);font-weight:700">80–90%</td><td style="text-align:left;font-weight:700;color:var(--teal)">151–170 bpm</td><td>Tolerância ao esforço intenso</td></tr>
+      <tr class="hl"><td>Z5 · VO₂máx</td><td style="text-align:left;color:var(--teal);font-weight:700">90–100%</td><td style="text-align:left;font-weight:700;color:var(--teal)">170–189 bpm</td><td>Pico de performance</td></tr>
+    </table>
+    <p style="font-size:11px;color:var(--soft);margin-top:10px;font-weight:600">Z4–Z5 destacadas = onde o atleta operou no treino de 46 min (FC média 165 bpm)</p>
+  </div>
+  <div class="card">
+    <div class="card-label">Zonas de Velocidade e Pace · Prescrição</div>
+    <table class="tbl">
+      <thead><tr><th>Zona</th><th style="text-align:left">% vVO₂</th><th style="text-align:left">Velocidade</th><th>Pace</th></tr></thead>
+      <tr><td>Regenerativo</td><td style="text-align:left;color:var(--muted);font-weight:600">&lt; 65%</td><td style="text-align:left;font-weight:700">&lt; 10,7 km/h</td><td>&gt; 5:36 /km</td></tr>
+      <tr><td>Base aeróbia</td><td style="text-align:left;color:var(--muted);font-weight:600">65–75%</td><td style="text-align:left;font-weight:700">10,7–12,4 km/h</td><td>5:36–4:50 /km</td></tr>
+      <tr><td>Moderado</td><td style="text-align:left;color:var(--muted);font-weight:600">75–85%</td><td style="text-align:left;font-weight:700">12,4–14,0 km/h</td><td>4:50–4:17 /km</td></tr>
+      <tr class="hl"><td>Limiar</td><td style="text-align:left;color:var(--teal);font-weight:700">85–92%</td><td style="text-align:left;font-weight:700;color:var(--teal)">14,0–15,2 km/h</td><td>4:17–3:57 /km</td></tr>
+      <tr class="hl"><td>HIIT / vVO₂</td><td style="text-align:left;color:var(--teal);font-weight:700">95–105%</td><td style="text-align:left;font-weight:700;color:var(--teal)">15,7–17,3 km/h</td><td>3:50–3:28 /km</td></tr>
+      <tr><td>Supramáximo</td><td style="text-align:left;color:var(--muted);font-weight:600">&gt; 105%</td><td style="text-align:left;font-weight:700">&gt; 17,3 km/h</td><td>&lt; 3:28 /km</td></tr>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card" style="margin:0">
+      <div class="card-label">HIIT Curto</div>
+      <table class="tbl">
+        <tr><td>Séries</td><td>8–10×</td></tr>
+        <tr><td>Esforço</td><td>30" @ 17–18 km/h</td></tr>
+        <tr><td>Recuperação</td><td>30" trote leve</td></tr>
+        <tr><td>FC alvo</td><td>175–185 bpm</td></tr>
+      </table>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="card-label">HIIT Longo</div>
+      <table class="tbl">
+        <tr><td>Séries</td><td>5–6×</td></tr>
+        <tr><td>Esforço</td><td>2' @ 15,5–16 km/h</td></tr>
+        <tr><td>Recuperação</td><td>2' trote</td></tr>
+        <tr><td>FC alvo</td><td>165–175 bpm</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box green" style="margin-bottom:16px">
+    <strong>Instrução de prescrição</strong>
+    <p>Prescrever por velocidade e PSE (8–9/10), não apenas FC — há atraso cronotrópico em esforços curtos.</p>
+  </div>
+</section>
+
+<!-- CONDUTA -->
+<section class="section" id="conduta">
+  <div class="card">
+    <div class="card-label">Conduta Técnica · Prioridade de Ação</div>
+    <div class="plist">
+      <div class="pitem"><div class="pnum">1</div><div class="ptext"><strong>Determinar FCmáx real</strong><span>Protocolo de campo: 3 km progressivo com sprint final nos últimos 400m. Usar monitor de tórax (Polar H10 ou Garmin HRM-Pro). Sem esse dado, qualquer prescrição por zona de FC é estimativa.</span></div></div>
+      <div class="pitem"><div class="pnum">2</div><div class="ptext"><strong>Estabelecer limiar anaeróbico real</strong><span>Teste de 30 min: ritmo médio dos últimos 20 min = pace de limiar. Essencial para prescrição de treino de limiar e controle de intensidade por zona.</span></div></div>
+      <div class="pitem"><div class="pnum">3</div><div class="ptext"><strong>Reestruturar distribuição de carga semanal</strong><span>Regra 80/20: 80% do volume em Z1–Z2 (base aeróbia), 20% em Z4–Z5. O treino de 46 min mostrou padrão invertido — risco real de overreaching em 3–4 semanas.</span></div></div>
+      <div class="pitem"><div class="pnum">4</div><div class="ptext"><strong>Monitorar FC de repouso diariamente</strong><span>Registrar ao acordar antes de levantar. Elevação de 5–7 bpm acima da média = sinal de fadiga acumulada. Marcador mais simples de recuperação.</span></div></div>
+      <div class="pitem"><div class="pnum">5</div><div class="ptext"><strong>Registrar PSE ao final de cada sessão</strong><span>Escala 0–10. Cruzar com FC média ao longo das semanas. Quando a mesma FC corresponde a PSE menor, há evolução objetiva do condicionamento.</span></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Pontos Positivos Confirmados</div>
+    <ul class="cklist">
+      <li><span class="ico green">✓</span><span><strong>VO₂máx excelente</strong> — 57–59 ml/kg/min, acima de 80–85% da população adulta ativa</span></li>
+      <li><span class="ico green">✓</span><span><strong>Eficiência mecânica alta</strong> — FC de 153 bpm a 15,8 km/h indica boa economia de corrida</span></li>
+      <li><span class="ico green">✓</span><span><strong>Tolerância ao esforço intenso</strong> — 46 min com FC média 165 bpm sem colapso de pace</span></li>
+      <li><span class="ico green">✓</span><span><strong>Perfil para provas de rua</strong> — com periodização adequada, potencial real para 5 km e 10 km competitivos</span></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-label">Dados Pendentes · Para Análise Completa</div>
+    <ul class="cklist">
+      <li><span class="ico amber">→</span><span><strong>Idade</strong> — necessária para classificação de VO₂máx por faixa etária (tabela ACSM)</span></li>
+      <li><span class="ico amber">→</span><span><strong>Peso corporal</strong> — para confirmar VO₂máx relativo (ml/kg/min)</span></li>
+      <li><span class="ico amber">→</span><span><strong>Volume semanal atual</strong> — frequência, modalidades, histórico de treino</span></li>
+      <li><span class="ico amber">→</span><span><strong>FCmáx real</strong> — via teste de campo com monitor de tórax</span></li>
+      <li><span class="ico amber">→</span><span><strong>Objetivo</strong> — prova alvo, distância, prazo</span></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-left">
+    CardioRun™
+    <span>Análise Fisiológica · Performance em Corrida</span>
+  </div>
+  <div class="footer-right">
+    Sherley Ferreira · Ed. Física · Mestre Ciência da Nutrição · IA Fitness<br>
+    Ubá · MG · Maio 2026
+  </div>
+</footer>
+
+</main>
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
